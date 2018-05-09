@@ -3,7 +3,7 @@ const ProductSchema = require('../model/ProductSchema');
 
 module.exports = {
 
-    getSummarizedProducts: function(category, callback) {
+    getSummarizedProducts: function(callback) {
         var docClient = new AWS.DynamoDB.DocumentClient();
 
         var params = {
@@ -19,7 +19,7 @@ module.exports = {
 
         var results = [];
 
-        if(category) {
+        /* if(category) {
             params['IndexName'] = ProductSchema.INDEXES.CATEGORY;
             params['KeyConditionExpression'] = `${ ProductSchema.PROPERTIES.CATEGORY } = :cat`;
             params['ExpressionAttributeValues'] = {
@@ -29,9 +29,9 @@ module.exports = {
             docClient.query(params, onResult);
         } else {
             docClient.scan(params, onResult);
-        }
+        } */
 
-        function onResult(err, data) {
+        docClient.scan(params, (err, data) => {
             if(err) {
                 console.log('Error occured while scanning for products. Error JSON:', JSON.stringify(err, null, 2));
                 callback(err);
@@ -49,15 +49,15 @@ module.exports = {
                     callback(null, results);
                 }
             }
-        }
+        });
     },
 
-    getProductDetails: function(name, category, callback) {
+    getProductDetails: function(brand, name, callback) {
         var docClient = new AWS.DynamoDB.DocumentClient();
 
         var key = {};
         key[ProductSchema.PROPERTIES.NAME] = name;
-        key[ProductSchema.PROPERTIES.CATEGORY] = category;
+        key[ProductSchema.PROPERTIES.BRAND] = brand;
 
         var params = {
             TableName: ProductSchema.TABLE_NAME,

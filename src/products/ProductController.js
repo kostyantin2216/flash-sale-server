@@ -7,19 +7,13 @@ var router = express.Router();
 // Get all products 
 router.get('/', function(req, res) {
     var handler = resultHandler.bind(res);
-    ProductStore.getSummarizedProducts(null, handler);
-});
-
-// Get products in category
-router.get('/:category', function(req, res) {
-    var handler = resultHandler.bind(res);
-    ProductStore.getSummarizedProducts(req.params.category, handler);
+    ProductStore.getSummarizedProducts(handler);
 });
 
 // Get product with provided id
-router.get('/:category/:name', function(req, res) {
+router.get('/:brand/:name', function(req, res) {
     var handler = resultHandler.bind(res);
-    ProductStore.getProductDetails(req.params.name, req.params.category, handler);
+    ProductStore.getProductDetails(req.params.brand, req.params.name, handler);
 });
 
 module.exports = router;

@@ -1,17 +1,14 @@
 module.exports = {
     TABLE_NAME: 'Products',
-    INDEXES: {
-        CATEGORY: 'CategoryIndex'
-    },
     PROPERTIES: {
         NAME: 'name',
-        CATEGORY: 'category',
-        BRAND: 'info.brand',
+        BRAND: 'brand',
+        SHORT_NAME: 'info.shortName',
         FEATURES: 'info.features',
-        STOCK: 'info.stock',
+        VARIANTS: 'info.variants',
         RETAIL_PRICE: 'info.retailPrice',
         PRICE: 'info.price',
-        SHIPPING_INCLUDED: 'info.shippingIncluded',
+        SHIPPING_PRICE: 'info.shippingPrice',
         VIDEO: 'info.videos',
         MAIN_IMAGE: 'info.mainImage',
         IMAGES: 'info.images',
