@@ -11,6 +11,8 @@
   "dependencies": {
     "aws-sdk": "^2.224.1",
     "body-parser": "^1.18.2",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "object-resolve-path": "^1.1.1",
+    "promise": "^8.0.1"
   }
 }

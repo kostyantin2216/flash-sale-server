@@ -10,8 +10,7 @@ module.exports = {
         PRICE: 'info.price',
         SHIPPING_PRICE: 'info.shippingPrice',
         VIDEO: 'info.videos',
-        MAIN_IMAGE: 'info.mainImage',
         IMAGES: 'info.images',
-        DESCRIPTION: 'info.description'
+        DESCRIPTION_URI: 'info.descriptionUri'
     }
 };

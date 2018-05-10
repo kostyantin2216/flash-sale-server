@@ -9,9 +9,11 @@ module.exports = {
         var params = {
             TableName : ProductSchema.TABLE_NAME,
             ProjectionExpression:`#nm, 
+                                  ${ ProductSchema.PROPERTIES.BRAND },
                                   ${ ProductSchema.PROPERTIES.RETAIL_PRICE }, 
                                   ${ ProductSchema.PROPERTIES.PRICE }, 
-                                  ${ ProductSchema.PROPERTIES.MAIN_IMAGE }`,
+                                  ${ ProductSchema.PROPERTIES.IMAGES },
+                                  ${ ProductSchema.PROPERTIES.SHORT_NAME }`,
             ExpressionAttributeNames:{
                 '#nm': ProductSchema.PROPERTIES.NAME
             }

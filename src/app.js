@@ -2,8 +2,7 @@ var AWS = require("aws-sdk");
 var express = require('express');
 
 AWS.config.update({
-    region: "us-west-2",
-    endpoint: "http://localhost:8000"
+    region: "eu-west-2"
 });
 
 var app = express();
