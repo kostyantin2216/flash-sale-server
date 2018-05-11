@@ -1,3 +1,5 @@
+"use strict";
+
 const S3 = require('aws-sdk/clients/s3'); 
 const Promise = require('promise');
 
@@ -13,7 +15,7 @@ module.exports = {
                     reject(err);
                 } else {
                     fulfill(data);
-                }
+                } 
             });
        });
     }

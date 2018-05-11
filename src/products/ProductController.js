@@ -1,37 +1,39 @@
-var express = require('express');
-var ProductStore = require('./services/ProductStore');
-var resultHandler = require('../utilities/server-utilities').jsonResultHandler;
-var ProductProcessor = require('./services/ProductProcessor');
+"use strict";
 
-var router = express.Router();
+const express = require('express');
+
+const resultHandler = require('../utilities/server-utilities').jsonResultHandler;
+const ProductStore = require('./services/ProductStore');
+const ProductProcessor = require('./services/ProductProcessor');
+
+const router = express.Router();
 
 // Get all products 
 router.get('/', function(req, res) {
     var handler = resultHandler.bind(res);
-    ProductStore.getSummarizedProducts((err, results) => {
-        if(err) {
-            handler(err);
-        } else {
-            let summarized = ProductProcessor.summarizeMany(results);
-            handler(err, summarized);
-            
-        }
-    });
+    ProductStore.getSummarizedProducts().then(
+        results => {
+            ProductProcessor.summarizeMany(results).then(
+                data => handler(null, data),
+                handler
+            );
+        },
+        handler
+    );
 });
 
-// Get product with provided id
+// Get product with provided brand and name
 router.get('/:brand/:name', function(req, res) {
     var handler = resultHandler.bind(res);
-    ProductStore.getProductDetails(req.params.brand, req.params.name, (err, result) => {
-        if(err) {
-            handler(err);
-        } else {
+    ProductStore.getProductDetails(req.params.brand, req.params.name).then(
+        result => {
             ProductProcessor.detailed(result).then(
-                data => handler(err, data),
-                newErr => handler(newErr)
+                data => handler(null, data),
+                handler
             );
-        }
-    });
+        },
+        handler
+    );
 });
 
 module.exports = router;
