@@ -3,6 +3,28 @@
 const AWS = require('aws-sdk');
 const ProductSchema = require('../model/ProductSchema');
 
+const SUMMARIZED_PROJECTION_EXPRESSION = `#nm, 
+                                         ${ ProductSchema.PROPERTIES.BRAND },
+                                         ${ ProductSchema.PROPERTIES.RETAIL_PRICE }, 
+                                         ${ ProductSchema.PROPERTIES.PRICE }, 
+                                         ${ ProductSchema.PROPERTIES.IMAGES },
+                                         ${ ProductSchema.PROPERTIES.SHORT_NAME }`;
+
+function getProduct(params) {
+    return new Promise((resolve, reject) => {
+        let docClient = new AWS.DynamoDB.DocumentClient();
+
+        docClient.get(params, function(err, data) {
+            if (err) {
+                console.error("Error while getting product. Error JSON:", JSON.stringify(err, null, 2));
+                reject(err)
+            } else {
+                resolve(data.Item);
+            }
+        });
+    });
+}
+
 module.exports = {
 
     getSummarizedProducts: function() {
@@ -11,12 +33,7 @@ module.exports = {
 
             var params = {
                 TableName : ProductSchema.TABLE_NAME,
-                ProjectionExpression:`#nm, 
-                                      ${ ProductSchema.PROPERTIES.BRAND },
-                                      ${ ProductSchema.PROPERTIES.RETAIL_PRICE }, 
-                                      ${ ProductSchema.PROPERTIES.PRICE }, 
-                                      ${ ProductSchema.PROPERTIES.IMAGES },
-                                      ${ ProductSchema.PROPERTIES.SHORT_NAME }`,
+                ProjectionExpression: SUMMARIZED_PROJECTION_EXPRESSION,
                 ExpressionAttributeNames:{
                     '#nm': ProductSchema.PROPERTIES.NAME
                 }
@@ -60,6 +77,25 @@ module.exports = {
         });
     },
 
+    getSummarizedProduct(brand, name) {
+        return new Promise((resolve, reject) => {
+            var key = {};
+            key[ProductSchema.PROPERTIES.NAME] = name;
+            key[ProductSchema.PROPERTIES.BRAND] = brand;
+
+            var params = {
+                TableName: ProductSchema.TABLE_NAME,
+                Key: key,
+                ProjectionExpression: SUMMARIZED_PROJECTION_EXPRESSION,
+                ExpressionAttributeNames: {
+                    '#nm': ProductSchema.PROPERTIES.NAME
+                }
+            };
+
+            getProduct(params).then(resolve, reject);
+        });
+    },
+
     getProductDetails: function(brand, name) {
         return new Promise((resolve, reject) => {
             var docClient = new AWS.DynamoDB.DocumentClient();
@@ -73,14 +109,7 @@ module.exports = {
                 Key: key
             };
 
-            docClient.get(params, function(err, data) {
-                if (err) {
-                    console.error("Error while getting product. Error JSON:", JSON.stringify(err, null, 2));
-                    reject(err)
-                } else {
-                    resolve(data.Item);
-                }
-            });
+            getProduct(params).then(resolve, reject);
         });
     }
 
