@@ -10,10 +10,11 @@ const SCResponseFactory = require('./services/ShoppingCartResponseFactory');
 const router = express.Router();
 
 
-router.get('/:token', stub('/:token'));
+router.get('/:token', function(req, res) {
+    const handler = resultHandler.bind(res);
 
-router.get('/:token/valid', stub('/:token/valid'));
-
+    
+});
 
 router.post('/add', function(req, res) {
     const handler = resultHandler.bind(res);
@@ -112,13 +113,3 @@ router.delete('/remove', function(req, res) {
 
 
 module.exports = router;
-
-function stub(path) {
-    return function(req, res) {
-        let token = SCTokenManager.createToken().then((token) => {    
-            console.log(path.replace(':token', req.params.token), '-', JSON.stringify(req.body));
-            console.log('token:', token);
-            res.json(req.body);
-        });
-    }
-}
