@@ -3,7 +3,7 @@
 const Promise = require('promise');
 const ShoppingCartToken = require('../model/ShoppingCartToken');
 
-const TOKEN_TTL_MS = 3000;
+const TOKEN_TTL_MS = 60000;
 
 const ShoppingCartTokenManager = (function() {
     const currentTokens = { };

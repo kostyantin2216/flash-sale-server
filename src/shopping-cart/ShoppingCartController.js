@@ -25,10 +25,10 @@ router.post('/add', function(req, res) {
         SCManager.cartExists(token).then(
             cartExists => {
                 if(cartExists) {
-                    addToCart(token, product);
+                    addToCart(handler, token, product);
                 } else {
                     SCManager.createCart().then(
-                        newToken => addToCart(newToken, product), 
+                        newToken => addToCart(handler, newToken, product), 
                         handler
                     );
                 }
