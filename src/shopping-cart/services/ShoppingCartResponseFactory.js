@@ -3,6 +3,7 @@
 const SCTokenManager = require('./ShoppingCartTokenManager');
 
 function buildResponse(token) {
+    console.log('building response');
     return new Promise((resolve, reject) => {
         SCTokenManager.getTimeLeftToLive(token).then(
             timeLeft => {
@@ -18,24 +19,19 @@ function buildResponse(token) {
 
 module.exports = {
     createResponse(token) {
+        console.log('creating response');
         return new Promise((resolve, reject) => {
-            if(token) {
-                SCTokenManager.isValid(token).then(
-                    isValid => {
-                        if(isValid) {
-                            buildResponse(token).then(resolve, reject);
-                        } else {
-                            reject(new Error('Invalid Token'));
-                        }
-                    },
-                    reject
-                );
-            } else {
-                SCTokenManager.createToken().then(
-                    newToken => buildResponse(newToken).then(resolve, reject),
-                    reject
-                );
-            }
+            SCTokenManager.isValid(token).then(
+                isValid => {
+                    console.log('is valid', isValid);
+                    if(isValid) {
+                        buildResponse(token).then(resolve, reject);
+                    } else {
+                        reject(new Error('Invalid Token'));
+                    }
+                },
+                reject
+            );
         });
     }
 }

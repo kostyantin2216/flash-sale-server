@@ -3,13 +3,13 @@
 const Promise = require('promise');
 const ShoppingCartToken = require('../model/ShoppingCartToken');
 
-const TOKEN_TTL_MS = 60000;
+const TOKEN_TTL_MS = 6000000;
 
 const ShoppingCartTokenManager = (function() {
     const currentTokens = { };
 
     return {
-        createToken: function() {
+        createToken: function(onTokenExpired) {
             let newToken = new ShoppingCartToken(TOKEN_TTL_MS, onTokenExpired);
             currentTokens[newToken.token] = newToken;
             console.log('ShoppingCartTokenManager:', 'Created token ' + newToken.token);
@@ -42,9 +42,5 @@ const ShoppingCartTokenManager = (function() {
         }
     };
 })();
-
-function onTokenExpired() {
-    ShoppingCartTokenManager.deleteToken(this.token);
-}
 
 module.exports = ShoppingCartTokenManager;

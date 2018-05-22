@@ -9,6 +9,7 @@ module.exports = {
      */
     jsonResultHandler: function(err, result) {
         if(err) {
+            console.log('ERROR:', JSON.stringify(err));
             this.status(500).json({ error: err });
         } else {
             this.json(result);

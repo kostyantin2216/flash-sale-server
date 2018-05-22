@@ -24,13 +24,14 @@ const ShoppingCartManager = (function() {
                 ); 
             });
         },
-        addToCart: function(token, productName, productBrand) {
+        addToCart: function(token, productName, productBrand, chosenVariants) {
             return new Promise((resolve, reject) => {
                 if(shoppingCarts[token]) {
                     SCTokenManager.updateToken(token);
                     ProductStore.getSummarizedProduct(productBrand, productName).then(
                         product => {
                             if(product) {
+                                product.variants = chosenVariants;
                                 shoppingCarts[token].products.push(product);
                                 resolve(shoppingCarts[token].products);
                             } else {
