@@ -27,7 +27,7 @@ function getProduct(params) {
 
 module.exports = {
 
-    getSummarizedProducts: function() {
+    getSummarizedProducts: function(processor) {
         return new Promise((resolve, reject) => {
             var docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -70,14 +70,18 @@ module.exports = {
                         params.ExclusiveStartKey = data.LastEvaluatedKey;
                         docClient.scan(params, onResult);
                     } else {
-                        resolve(results);
+                        if(processor === undefined) {
+                            resolve(results);
+                        } else {
+                            processor(results).then(resolve, reject);
+                        }
                     }
                 }
             }
         });
     },
 
-    getSummarizedProduct(brand, name) {
+    getSummarizedProduct(brand, name, processor) {
         return new Promise((resolve, reject) => {
             var key = {};
             key[ProductSchema.PROPERTIES.NAME] = name;
@@ -92,11 +96,18 @@ module.exports = {
                 }
             };
 
-            getProduct(params).then(resolve, reject);
+            if(processor === undefined) {
+                getProduct(params).then(resolve, reject);
+            } else {
+                getProduct(params).then(
+                    product => processor(product).then(resolve, reject),
+                    reject
+                );
+            }
         });
     },
 
-    getProductDetails: function(brand, name) {
+    getProductDetails: function(brand, name, processor) {
         return new Promise((resolve, reject) => {
             var docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -109,7 +120,14 @@ module.exports = {
                 Key: key
             };
 
-            getProduct(params).then(resolve, reject);
+            if(processor === undefined) {
+                getProduct(params).then(resolve, reject);
+            } else {
+                getProduct(params).then(
+                    product => processor(product).then(resolve, reject),
+                    reject
+                );
+            }
         });
     }
 

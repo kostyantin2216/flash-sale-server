@@ -20,6 +20,10 @@ module.exports = class ShoppingCartToken {
 
     getTimeLeftToLive() {
         let timeAlive = Date.now() - this.lastUpdate;
-        return ttl - timeAlive;
+        return this.ttl - timeAlive;
+    }
+
+    getExpirationTime() {
+        return this.lastUpdate + this.ttl;
     }
 }

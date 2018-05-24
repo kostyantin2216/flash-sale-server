@@ -5,11 +5,11 @@ const SCTokenManager = require('./ShoppingCartTokenManager');
 function buildResponse(token) {
     console.log('building response');
     return new Promise((resolve, reject) => {
-        SCTokenManager.getTimeLeftToLive(token).then(
-            timeLeft => {
+        SCTokenManager.getExpirationTime(token).then(
+            expirationTime => {
                 resolve({
                     token: token,
-                    timeLeftToLive: timeLeft
+                    expiresOn: expirationTime
                 });
             }, 
             reject

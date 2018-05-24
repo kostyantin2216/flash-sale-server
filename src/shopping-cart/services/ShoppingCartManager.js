@@ -4,6 +4,7 @@ const Promise = require('promise');
 const SCTokenManager = require('./ShoppingCartTokenManager');
 const ShoppingCart = require('../model/ShoppingCart');
 const ProductStore = require('../../products/services/ProductStore');
+const ProductProcessor = require('../../products/services/ProductProcessor');
 
 const ShoppingCartManager = (function() {
     const shoppingCarts = {};
@@ -28,9 +29,10 @@ const ShoppingCartManager = (function() {
             return new Promise((resolve, reject) => {
                 if(shoppingCarts[token]) {
                     SCTokenManager.updateToken(token);
-                    ProductStore.getSummarizedProduct(productBrand, productName).then(
+                    ProductStore.getSummarizedProduct(productBrand, productName, ProductProcessor.summarize).then(
                         product => {
                             if(product) {
+                                console.log(JSON.stringify(chosenVariants));
                                 product.variants = chosenVariants;
                                 shoppingCarts[token].products.push(product);
                                 resolve(shoppingCarts[token].products);

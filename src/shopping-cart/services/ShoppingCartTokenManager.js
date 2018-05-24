@@ -3,7 +3,7 @@
 const Promise = require('promise');
 const ShoppingCartToken = require('../model/ShoppingCartToken');
 
-const TOKEN_TTL_MS = 6000000;
+const TOKEN_TTL_MS = 3600000;
 
 const ShoppingCartTokenManager = (function() {
     const currentTokens = { };
@@ -35,7 +35,23 @@ const ShoppingCartTokenManager = (function() {
 
         getTimeLeftToLive: function(token) {
             if(currentTokens[token]) {
-                return Promise.resolve(currentTokens[token].getTimeLeftToLive);
+                return Promise.resolve(currentTokens[token].getTimeLeftToLive());
+            } else {
+                return Promise.reject(new Error('Invalid Token!'));
+            }
+        },
+
+        getLastUpdateTime: function(token) {
+            if(currentTokens[token]) {
+                return Promise.resolve(currentTokens[token].lastUpdate);
+            } else {
+                return Promise.reject(new Error('Invalid Token!'));
+            }
+        },
+
+        getExpirationTime: function(token) {
+            if(currentTokens[token]) {
+                return Promise.resolve(currentTokens[token].getExpirationTime());
             } else {
                 return Promise.reject(new Error('Invalid Token!'));
             }
