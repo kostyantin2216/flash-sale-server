@@ -76,14 +76,14 @@ router.post('/add', function(req, res) {
 });
 
 function addToCart(handler, token, product) {
-    
     console.log("adding to cart");
+
     SCManager.addToCart(token, product.name, product.brand, product.variants).then(
         products => {
             console.log('added to cart:', 'token:', token);
+            
             SCResponseFactory.createResponse(token).then(
                 response => {
-                    
                     console.log('added to cart:', 'token:', token);
                     response.products = products;
                     handler(null, response);

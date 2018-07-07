@@ -10,9 +10,11 @@ const ShoppingCartManager = (function() {
     const shoppingCarts = {};
 
     return {
+        
         cartExists: function(token) {
             return Promise.resolve(token && shoppingCarts[token] !== undefined);
         },
+
         createCart: function() {
             return new Promise((resolve, reject) => {
                 SCTokenManager.createToken(onTokenExpired).then(
@@ -25,28 +27,37 @@ const ShoppingCartManager = (function() {
                 ); 
             });
         },
+
         addToCart: function(token, productName, productBrand, chosenVariants) {
             return new Promise((resolve, reject) => {
-                if(shoppingCarts[token]) {
+                let cart = shoppingCarts[token];
+                if (cart) {
                     SCTokenManager.updateToken(token);
-                    ProductStore.getSummarizedProduct(productBrand, productName, ProductProcessor.summarize).then(
-                        product => {
-                            if(product) {
-                                console.log(JSON.stringify(chosenVariants));
-                                product.variants = chosenVariants;
-                                shoppingCarts[token].products.push(product);
-                                resolve(shoppingCarts[token].products);
-                            } else {
-                                reject(new Error('No product exists for name and brand'));
-                            }
-                        },
-                        reject
-                    );
+                    let newProduct = { brand: productBrand, name: productName, variants: chosenVariants };
+                    if (cart.productExists(newProduct)) {
+                        cart.addProduct(newProduct);
+                        resolve(cart.products);
+                    } else {
+                        ProductStore.getSummarizedProduct(productBrand, productName, ProductProcessor.summarize).then(
+                            product => {
+                                if (product) {
+                                    console.log(JSON.stringify(chosenVariants));
+                                    product.variants = chosenVariants;
+                                    cart.addProduct(product);
+                                    resolve(cart.products);
+                                } else {
+                                    reject(new Error('No product exists for name and brand'));
+                                }
+                            },
+                            reject
+                        );
+                    }
                 } else {
                     reject(new Error('No cart exists for token'));
                 }
             });
         },
+
         removeFromCart: function(token, productName, productBrand) {
             return new Promise((resolve, reject) => {
                 if(shoppingCarts[token]) {
@@ -77,6 +88,7 @@ const ShoppingCartManager = (function() {
                 }
             });
         },
+
         getProducts: function(token) {
             return new Promise((resolve, reject) => {
                 if(shoppingCarts[token]) {
@@ -87,6 +99,7 @@ const ShoppingCartManager = (function() {
                 }
             });
         },
+
         deleteCart: function(token) {
             if(shoppingCarts[token]) {
                 SCTokenManager.deleteToken(token);
